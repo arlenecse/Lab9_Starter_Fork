@@ -102,6 +102,104 @@
 
     // Start your code here
     // You may move this JS to another file if you wish
+
+    //Step 3
+/*
+    try{
+      if(isNaN(firstNum) || isNan(secondNum)){
+        
+      }
+    }
+*/
+
+    //Step 2
+    errorBtns.forEach((button) => {
+      button.addEventListener('click', () => {
+        if(button.textContent == 'Console Log'){
+          console.log('Console Log Demo');
+        } else if (button.textContent == 'Console Error'){
+          console.error('Console Error Demo');
+        } else if (button.textContent == 'Console Count'){
+          console.count('Console Count');
+        } else if (button.textContent == 'Console Warn'){
+          console.warn('Console Warn Button');
+        } else if (button.textContent == 'Console Assert'){
+          console.assert(1 + 2 === 2,'The number does not equal 3');
+        } else if (button.textContent == 'Console Clear'){
+          console.clear('Console Clear');
+        } else if (button.textContent == 'Console Dir'){
+          console.dir(button);
+        } else if (button.textContent == 'Console dirxml'){
+          console.dirxml(button);
+        } else if (button.textContent == 'Console Group Start'){
+          console.group();
+        } else if (button.textContent == 'Console Group End'){
+          console.groupEnd();
+        } else if (button.textContent == 'Console Table'){
+          console.table([{name: 'Software Engineering', num: 110}, {name: 'Progamming Languages', num: 130}, {name: 'Advanced Software Engineering', num: 112}]); 
+        } else if (button.textContent == 'Start Timer'){
+          console.time();
+        } else if (button.textContent == 'End Timer'){
+          console.timeEnd();
+        } else if (button.textContent == 'Console Trace'){
+          console.trace(); //finish
+        } else if (button.textContent == 'Trigger a Global Error'){ //fix
+          try {
+            throw new Error("Global Error");
+          } catch (error) {
+            console.error("Caught an error:", error.message);
+          }
+        }
+      });
+    })
+
+    //Step 4
+class ValidationError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "ValidationError"; // Set the error name
+    }
+}
+
+class PropertyRequiredError extends ValidationError {
+  constructor(property) {
+    super("No property: " + property);
+    this.name = "PropertyRequiredError";
+    this.property = property;
+  }
+}
+
+// Usage
+function readUser(json) {
+  let user = JSON.parse(json);
+
+  if (!user.age) {
+    throw new PropertyRequiredError("age");
+  }
+  if (!user.name) {
+    throw new PropertyRequiredError("name");
+  }
+
+  return user;
+}
+
+// Working example with try..catch
+
+try {
+  let user = readUser('{ "age": 25 }');
+} catch (err) {
+  if (err instanceof ValidationError) {
+    alert("Invalid data: " + err.message); // Invalid data: No property: name
+    alert(err.name); // PropertyRequiredError
+    alert(err.property); // name
+  } else if (err instanceof SyntaxError) {
+    alert("JSON Syntax Error: " + err.message);
+  } else {
+    throw err; // unknown error, rethrow it
+  }
+}
+
+    //Step 5
   </script>
 </body>
 
