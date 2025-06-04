@@ -86,7 +86,12 @@
       <button>Trigger a Global Error</button>
     </section>
   </main>
-
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "238d0eddabe242cda7accc59a72c16be"
+    });
+  </script>
   <script>
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
@@ -96,21 +101,28 @@
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
       output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      //Step 3
+        try{
+          if (!firstNum || !secondNum || !operator) {
+            throw new Error("All fields must be filled.");
+          }
+          if(isNaN(firstNum) || isNan(secondNum)){
+            throw new Error("Both inputs must be numbers");
+          }
+          let result = eval(`${firstNum} ${operator} ${secondNum}`);
+          if (isNaN(result) || !isFinite(result)) {
+            throw new Error("Invalid calculation.");
+          }
+        } catch (error) {
+          console.error("An error occurred", error.message);
+          TrackJS.track('Testing TrackJS!');
+        } finally {
+          console.log("Form completed");
+        }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
-    // Start your code here
-    // You may move this JS to another file if you wish
-
-    //Step 3
-/*
-    try{
-      if(isNaN(firstNum) || isNan(secondNum)){
-        
-      }
-    }
-*/
 
     //Step 2
     errorBtns.forEach((button) => {
@@ -142,64 +154,66 @@
         } else if (button.textContent == 'End Timer'){
           console.timeEnd();
         } else if (button.textContent == 'Console Trace'){
-          console.trace(); //finish
+          function deepest() {
+            console.trace(); 
+          }
+
+          function deeper() {
+            deepest();
+          }
+
+          function deep() {
+            deeper();
+          }
+
+          function handleBtnClick() {
+            deep();
+          }
+
+          handleBtnClick();
         } else if (button.textContent == 'Trigger a Global Error'){ //fix
           try {
             throw new Error("Global Error");
           } catch (error) {
             console.error("Caught an error:", error.message);
+            TrackJS.track('Testing TrackJS!');
           }
         }
       });
     })
 
-    //Step 4
+    //Step 4 exploring extending error
 class ValidationError extends Error {
     constructor(message) {
         super(message);
-        this.name = "ValidationError"; // Set the error name
+        this.name = "ValidationError"; 
     }
 }
 
-class PropertyRequiredError extends ValidationError {
-  constructor(property) {
-    super("No property: " + property);
-    this.name = "PropertyRequiredError";
-    this.property = property;
-  }
-}
-
-// Usage
 function readUser(json) {
   let user = JSON.parse(json);
 
   if (!user.age) {
-    throw new PropertyRequiredError("age");
+    throw new ValidationError("No field: age");
   }
   if (!user.name) {
-    throw new PropertyRequiredError("name");
+    throw new ValidationError("No field: name");
   }
 
   return user;
 }
 
-// Working example with try..catch
-
 try {
   let user = readUser('{ "age": 25 }');
-} catch (err) {
-  if (err instanceof ValidationError) {
-    alert("Invalid data: " + err.message); // Invalid data: No property: name
-    alert(err.name); // PropertyRequiredError
-    alert(err.property); // name
-  } else if (err instanceof SyntaxError) {
-    alert("JSON Syntax Error: " + err.message);
+} catch (error) {
+  if (error instanceof ValidationError) {
+    alert("Invalid data: " + error.message); 
+  } else if (err instanceof SyntaxError) { 
+    alert("JSON Syntax Error: " + error.message);
   } else {
-    throw err; // unknown error, rethrow it
+    throw error;
   }
 }
-
-    //Step 5
   </script>
 </body>
 
